@@ -212,5 +212,3 @@ for a in array {
         }
     }
 }
-
-print("You blew it big time dude")

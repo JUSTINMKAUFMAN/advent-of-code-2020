@@ -8,8 +8,6 @@ fun main() {
                 .toMap()
         }
 
-
-
     val validators: Map<String, ((String) -> (Boolean))> = mapOf(
         "byr" to { (it.toIntOrNull() in 1920..2002) },
         "iyr" to { (it.toIntOrNull() in 2010..2020) },

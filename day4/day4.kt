@@ -13,7 +13,7 @@ fun main() {
     val validators: Map<String, ((String) -> (Boolean))> = mapOf(
         "byr" to { (it.toIntOrNull() in 1920..2002) },
         "iyr" to { (it.toIntOrNull() in 2010..2020) },
-        "eyr" to { (it.toIntOrNull() 2020..2030) },
+        "eyr" to { (it.toIntOrNull() in 2020..2030) },
         "ecl" to { listOf("amb", "blu", "brn", "gry", "grn", "hzl", "oth").contains(it) },
         "pid" to { it.count() == 9 && it.filter { it.isDigit() }.count() == 9 },
         "cid" to { _ -> true },

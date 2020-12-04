@@ -8,57 +8,31 @@ fun main() {
                 .toMap()
         }
 
-    val requiredFields = listOf("byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid").sorted()
+
 
     val validators: Map<String, ((String) -> (Boolean))> = mapOf(
-        "byr" to { str ->
-            val int = str.toIntOrNull()
-            if (int == null) false
-            else (int in 1920..2002)
+        "byr" to { (it.toIntOrNull() in 1920..2002) },
+        "iyr" to { (it.toIntOrNull() in 2010..2020) },
+        "eyr" to { (it.toIntOrNull() 2020..2030) },
+        "ecl" to { listOf("amb", "blu", "brn", "gry", "grn", "hzl", "oth").contains(it) },
+        "pid" to { it.count() == 9 && it.filter { it.isDigit() }.count() == 9 },
+        "cid" to { _ -> true },
+        "hgt" to {
+            if (it.endsWith("cm")) (it.replace("cm", "").toIntOrNull() in 150..193)
+            else if (it.endsWith("in")) (it.replace("in", "").toIntOrNull() in 59..76)
+            else false
         },
-        "iyr" to { str ->
-            val int = str.toIntOrNull()
-            if (int == null) false
-            else (int in 2010..2020)
-        },
-        "eyr" to { str ->
-            val int = str.toIntOrNull()
-            if (int == null) false
-            else (int in 2020..2030)
-        },
-        "hgt" to { str ->
-            if (str.endsWith("cm")) {
-                val int = str.replace("cm", "").toIntOrNull()
-                if (int == null) false
-                else (int in 150..193)
-            } else if (str.endsWith("in")) {
-                val int = str.replace("in", "").toIntOrNull()
-                if (int == null) false
-                else (int in 59..76)
-            } else false
-        },
-        "hcl" to { str ->
-            if (!str.startsWith("#")) false else {
-                val valids = listOf('a', 'b', 'c', 'd', 'e', 'f', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
+        "hcl" to {
+            if (!it.startsWith("#")) false else {
+                val valids = listOf('a','b','c','d','e','f','0','1','2','3','4','5','6','7','8','9')
                 var isValid = true
-
-                for (char in str.removePrefix("#").toList()) {
-                    if (!valids.contains(char)) {
-                        isValid = false
-                        break
-                    }
-                }
+                for (char in it.removePrefix("#").toList()) { if (!valids.contains(char)) { isValid = false; break } }
                 isValid
             }
-        },
-        "ecl" to { str ->
-            listOf("amb", "blu", "brn", "gry", "grn", "hzl", "oth").contains(str)
-        },
-        "pid" to { str ->
-            str.count() == 9 && str.filter { it.isDigit() }.count() == 9
-        },
-        "cid" to { _ -> true }
+        }
     )
+
+    val requiredFields: List<String> get() = validators.keys.toList().sorted()
 
     val validA = passports.fold(0) { sum, passport ->
         sum + if (passport.keys.toList().filter { it != "cid" }.sorted() == requiredFields) 1 else 0

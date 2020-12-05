@@ -31,18 +31,15 @@ fun main() {
     // Part A
     val seats = input.trim().lines().map { Seat.getSeat(it) }
     val maxSeatId = seats.map { it.id }.sorted().last()
-    println("Max SeatID: " + maxSeatId)
+    println("[A] Max SeatID: " + maxSeatId)
 
     // Part B
-    val rs = seats
-        .filter { !listOf(0, 127).contains(it.row) }
-        .sortedWith(compareBy<Seat> { it.row }.thenBy { it.col })
-        .groupBy { it.row }
-        .filterValues { it.count() < 8 }
-        .values
-        .first()
+    val mySeatId = seats
+        .filter { !listOf(0, 127).contains(it.row) } // Ditch first & last rows
+        .sortedWith(compareBy<Seat> { it.row }.thenBy { it.col }) // Sort
+        .groupBy { it.row }.values // Groups of seats in each row
+        .first { it.count() < 8 } // Row missing a seat
+        .mapIndexedNotNull { i, s -> if (s.col != i) Seat(s.row, (s.col-1).coerceIn(0..7)).id else null }.first() // Missing seat ID
 
-    // lol i have 2 kids don't @ me unless you do too
-    println(rs)
-    println(Seat(row = 77, col = 3).id)
+    println("[B] My SeatID: " + mySeatId)
 }
